@@ -152,9 +152,10 @@ test <-  read.csv(file = test_path, stringsAsFactors = FALSE)
 
 ```{r}
 # note the power functional features of R bring us! 
-tidy_text <- unnest_tokens(train, 'splitted', 'tweet', token="words") %>% 
-  filter(!splitted %in% splitted_stop_words & nchar(splitted) > 2)
-tidy_text$splitted %>% tibble(name = .) %>% filter(xfun::is_ascii(name)== T)
+#tidy_text <- unnest_tokens(train, 'splitted', 'tweet', token="words") %>% 
+  #filter(!splitted %in% splitted_stop_words & nchar(splitted) > 2)
+#tidy_text$splitted %>% tibble(name = .) %>% filter(xfun::is_ascii(name)== T)
+tidy_text <- unnest_tokens(train, 'splitted', 'tweet', token="words") %>% filter(!splitted %in% splitted_stop_words)
 
 ```
 
@@ -219,6 +220,8 @@ naiveBayes <- setRefClass("naiveBayes",
                     {
                       entries = strsplit(message, split = " ")[[1]]
                       entries <- entries[!entries %in% splitted_stop_words]
+                      
+                      print(entries)
                       start_prob_neutr = 1
                       start_prob_discrm = 1
                       
@@ -236,13 +239,15 @@ naiveBayes <- setRefClass("naiveBayes",
                         if (word %in% counts_tidy$splitted){
                           start_prob_discrm = start_prob_discrm * counts_tidy[which(counts_tidy$splitted == word), 5]
                         }else{
-                          start_prob_neutr = start_prob_neutr * 1/(sum(counts_tidy $n_discrm) + nrow(counts_tidy))
+                          start_prob_discrm = start_prob_discrm * 1/(sum(counts_tidy $n_discrm) + nrow(counts_tidy))
                         }
                       
                       }
                       
                       start_prob_discrm = start_prob_discrm * prob_tw_discr
                       start_prob_neutr = start_prob_neutr * prob_tw_neutr
+                      #print(start_prob_discrm)
+                      #print(start_prob_neutr)
                       
                       if (start_prob_neutr < start_prob_discrm){
                         return("discrim")
@@ -259,7 +264,15 @@ naiveBayes <- setRefClass("naiveBayes",
                     # try how well your model generalizes to real world data! 
                     score = function(X_test, y_test)
                     {
-                         # TODO
+                      X_vectorized <- data_frame("tweets" = X_test)
+                      X_vectorized <- X_vectorized %>% rowwise()  %>% mutate(y_hat = predict(tweets))
+                      results <- X_vectorized 
+                      results$y <- y_test
+                      
+                      results <- results  %>% mutate(successful = if_else(y_hat == y, 1, 0))
+                      
+                      print(results)
+                      return (sum(results$successful)/nrow(results))
                     }
 ))
 
@@ -271,7 +284,10 @@ model$fit(tidy_text)
 counts_tidy <- model$counts_tidy
 ```
 ```{r}
-model$predict("@user @user worst customer service in the united states! already repoed 2 the better business bureau!  @user" )
+model$predict("well said ð")
+X_test <- train[1:300,4]
+y_test <- train[1:300,3]
+model$score(X_test, y_test)
 ```
 
 ## Measure effectiveness of your classifier

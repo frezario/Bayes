@@ -282,6 +282,39 @@ model$score(X_test, y_test)
 -   Visualize them.
 
 ```{r}
+counts_tidy <<- tidy_text %>% count(splitted, sort = TRUE)
+                      
+  n_overall <- nrow(tidy_text)
+  n_discr <- nrow(tidy_text %>% filter(tidy_text$label=="discrim"))
+  n_neutr <- nrow(tidy_text %>% filter(tidy_text$label=="neutral"))
+  prob_tw_neutr <<- n_neutr/n_overall
+  prob_tw_discr <<- n_discr/n_overall
+  tidy_discrm <- tidy_text %>% filter(tidy_text$label=="discrim")
+  counts_discrm <- tidy_discrm %>% count(splitted, sort = TRUE)
+      
+  tidy_neutr <- tidy_text %>% filter(tidy_text$label=="neutral")
+  counts_neutr <- tidy_neutr %>% count(splitted, sort = TRUE)
+                      
+ggplot(head(tidy_discrm %>% count(splitted, sorted=TRUE), 50)) +
+  geom_col(aes(x = splitted, y = n), 
+            color = 'darkgreen') +
+  
+  ggtitle("Basic Plot") +
+  xlab("words") +
+  ylab("NUMBER") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10, angle=90),
+        axis.text.y = element_text(face = 'bold', size = 10))
+ggplot(head(tidy_neutr %>% count(splitted, sorted=TRUE), 50)) +
+  geom_col(aes(x = splitted, y = n), 
+            color = 'darkgreen') +
+  
+  ggtitle("Basic Plot") +
+  xlab("words") +
+  ylab("NUMBER") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10, angle=90),
+        axis.text.y = element_text(face = 'bold', size = 10))
 ```
 
 -   Show failure cases.
@@ -294,11 +327,5 @@ print(var[which(var$successful== 0), 1])
 
 ## Conclusions
 
-Summarize your work by explaining in a few sentences the points listed
-below.
-
--   Describe the method implemented in general. Show what are
-    mathematical foundations you are basing your solution on.
--   List pros and cons of the method. This should include the
-    limitations of your method, all the assumption you make about the
-    nature of your data etc.
+We created a simple multinomial Bayes' classifier.
+# Todo

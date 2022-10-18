@@ -230,7 +230,7 @@ naiveBayes <- setRefClass("naiveBayes",
                         if (word %in% counts_tidy$splitted){
                           start_prob_neutr = start_prob_neutr * counts_tidy[which(counts_tidy$splitted == word), 6]
                         }else{
-                          start_prob_neutr = start_prob_neutr * 1/(sum(counts_tidy $n_neutr) + nrow(counts_tidy))
+                          start_prob_neutr = start_prob_neutr * 1/(2 * nrow(counts_tidy))
                         }
                       
                       }
@@ -239,7 +239,7 @@ naiveBayes <- setRefClass("naiveBayes",
                         if (word %in% counts_tidy$splitted){
                           start_prob_discrm = start_prob_discrm * counts_tidy[which(counts_tidy$splitted == word), 5]
                         }else{
-                          start_prob_discrm = start_prob_discrm * 1/(sum(counts_tidy $n_discrm) + nrow(counts_tidy))
+                          start_prob_discrm = start_prob_discrm * 1/(2 * nrow(counts_tidy))
                         }
                       
                       }
@@ -284,7 +284,6 @@ model$fit(tidy_text)
 counts_tidy <- model$counts_tidy
 ```
 ```{r}
-model$predict("well said ð")
 X_test <- train[1:300,4]
 y_test <- train[1:300,3]
 model$score(X_test, y_test)

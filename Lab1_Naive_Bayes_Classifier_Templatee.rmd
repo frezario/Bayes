@@ -317,6 +317,28 @@ ggplot(head(tidy_neutr %>% count(splitted, sorted=TRUE), 50)) +
         axis.text.y = element_text(face = 'bold', size = 10))
 ```
 
+
+```{r}
+train_data <- data.frame(group = c("discrimination", "neutral"), 
+                        number_of_words = c(nrow(train %>% filter(label =="discrim")),
+                                   nrow(train %>% filter(label == "neutral"))))
+
+ggplot(train_data, aes(x="trained\ndata\nred-neutral\ngreen-discr", y=number_of_words,fill=group)) +
+                        geom_bar(stat="identity", color='green', fill=c( 'red','green'),width=20) +
+                        coord_polar("y", start=100)
+
+#after training:
+
+test_data <- data.frame(group = c("discrimination", "neutral"), 
+                        number_of_words = c(nrow(test %>% filter(label =="discrim")),
+                                   nrow(test %>% filter(label == "neutral"))))
+
+ggplot(train_data, aes(x="tested\ndata\nred-neutral\ngreen-discr", y=number_of_words, fill=group)) +
+                        geom_bar(stat="identity", color='green', fill=c('red','green'),width=20) +
+                        coord_polar("y", start=100)
+
+```
+
 -   Show failure cases.
 
 ```{r}

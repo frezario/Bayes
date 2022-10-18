@@ -164,6 +164,45 @@ Each time you work with some data, you need to understand it before you
 start processing it. R has very powerful tools to make nice plots and
 visualization. Show what are the most common words for negative and
 positive examples as a histogram, word cloud etc. Be creative!
+```{r}
+counts_tidy <<- tidy_text %>% count(splitted, sort = TRUE)
+                      
+  n_overall <- nrow(tidy_text)
+  n_discr <- nrow(tidy_text %>% filter(tidy_text$label=="discrim"))
+  n_neutr <- nrow(tidy_text %>% filter(tidy_text$label=="neutral"))
+
+  prob_tw_neutr <<- n_neutr/n_overall
+  prob_tw_discr <<- n_discr/n_overall
+
+  tidy_discrm <- tidy_text %>% filter(tidy_text$label=="discrim")
+  counts_discrm <- tidy_discrm %>% count(splitted, sort = TRUE)
+      
+  tidy_neutr <- tidy_text %>% filter(tidy_text$label=="neutral")
+  counts_neutr <- tidy_neutr %>% count(splitted, sort = TRUE)
+                      
+ggplot(head(tidy_discrm %>% count(splitted, sorted=TRUE), 50)) +
+  geom_col(aes(x = splitted, y = n), 
+            color = 'darkgreen') +
+  
+  ggtitle("Basic Plot") +
+  xlab("words") +
+  ylab("NUMBER") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10, angle=90),
+        axis.text.y = element_text(face = 'bold', size = 10))
+
+
+ggplot(head(tidy_neutr %>% count(splitted, sorted=TRUE), 50)) +
+  geom_col(aes(x = splitted, y = n), 
+            color = 'darkgreen') +
+  
+  ggtitle("Basic Plot") +
+  xlab("words") +
+  ylab("NUMBER") +
+  theme_bw() +
+  theme(axis.text.x = element_text(face = 'bold', size = 10, angle=90),
+        axis.text.y = element_text(face = 'bold', size = 10))
+```
 
 ## Classifier implementation
 

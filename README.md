@@ -9,5 +9,5 @@ due to which the total conditional probability of our tweet belonging
 to a certain class could become zero. The main problem, though, was not the
 complexity of the task itself, but the limitations in the use of tools - 
 honestly, the R language did not prove to be helpful in completing the task.
-Not least because its syntax is practical and does not conform to modern 
+Not least because its syntax is inpractical and does not conform to modern 
 program design standards.

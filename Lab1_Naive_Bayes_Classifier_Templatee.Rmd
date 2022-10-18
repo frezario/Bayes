@@ -169,7 +169,12 @@ colnames(counts_tidy)[colnames(counts_tidy) == "n"] <- "n_neutr"
 ```
 
 ```{r}
-counts_tidy[is.na(counts_tidy)] <- 1
+counts_tidy[is.na(counts_tidy)] <- 0
+
+
+
+counts_tidy$n_neutr <- counts_tidy$n_neutr + 1
+counts_tidy$n_discrm <- counts_tidy$n_discrm + 1
 
 sum_discr <- sum(counts_tidy $n_discrm)
 sum_neutr <- sum(counts_tidy $n_neutr)

@@ -153,7 +153,8 @@ test <-  read.csv(file = test_path, stringsAsFactors = FALSE)
 ```{r}
 # note the power functional features of R bring us! 
 tidy_text <- unnest_tokens(train, 'splitted', 'tweet', token="words") %>% 
-  filter(!splitted %in% splitted_stop_words)
+  filter(!splitted %in% splitted_stop_words & nchar(splitted) > 2)
+tidy_text$splitted %>% tibble(name = .) %>% filter(xfun::is_ascii(name)== T)
 
 ```
 
@@ -243,7 +244,7 @@ naiveBayes <- setRefClass("naiveBayes",
                       start_prob_discrm = start_prob_discrm * prob_tw_discr
                       start_prob_neutr = start_prob_neutr * prob_tw_neutr
                       
-                      if (start_prob_neutr > start_prob_discrm){
+                      if (start_prob_neutr < start_prob_discrm){
                         return("discrim")
                       }
                       else{
@@ -268,7 +269,9 @@ model = naiveBayes()
 ```{r}
 model$fit(tidy_text)
 counts_tidy <- model$counts_tidy
-model$predict("well said ð" )
+```
+```{r}
+model$predict("@user @user worst customer service in the united states! already repoed 2 the better business bureau!  @user" )
 ```
 
 ## Measure effectiveness of your classifier

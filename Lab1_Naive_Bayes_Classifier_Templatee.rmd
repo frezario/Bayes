@@ -105,7 +105,7 @@ library(ggplot2)
 -   do not forget to submit both the (compiled) Rmd source file and the
     .html output
 
-### Data pre-processing
+## Data pre-processing
 
 -   Read the *.csv* data files.
 -   Сlear your data from punctuation or other unneeded symbols.
@@ -129,7 +129,6 @@ library(ggplot2)
 
 ```{r}
 list.files(getwd())
-list.files("data/0-authors")
 ```
 
 ```{r}
@@ -159,7 +158,7 @@ tidy_text <- unnest_tokens(train, 'splitted', 'tweet', token="words") %>% filter
 
 ```
 
-### Data visualization
+## Data visualization
 
 Each time you work with some data, you need to understand it before you
 start processing it. R has very powerful tools to make nice plots and
@@ -170,14 +169,8 @@ positive examples as a histogram, word cloud etc. Be creative!
 
 ```{r}
 naiveBayes <- setRefClass("naiveBayes",
-                          
-       # here it would be wise to have some vars to store intermediate result
-       # frequency dict etc. Though pay attention to bag of wards! 
        fields = c("counts_tidy", "prob_tw_neutr", "prob_tw_discr"),
        methods = list(
-                    # prepare your training data as X - bag of words for each of your
-                    # messages and corresponding label for the message encoded as 0 or 1 
-                    # (binary classification task)
                     fit = function(tidy_text)
                     {
                       counts_tidy <<- tidy_text %>% count(splitted, sort = TRUE)
@@ -221,7 +214,6 @@ naiveBayes <- setRefClass("naiveBayes",
                       entries = strsplit(message, split = " ")[[1]]
                       entries <- entries[!entries %in% splitted_stop_words]
                       
-                      print(entries)
                       start_prob_neutr = 1
                       start_prob_discrm = 1
                       
@@ -239,7 +231,7 @@ naiveBayes <- setRefClass("naiveBayes",
                         if (word %in% counts_tidy$splitted){
                           start_prob_discrm = start_prob_discrm * counts_tidy[which(counts_tidy$splitted == word), 5]
                         }else{
-                          start_prob_discrm = start_prob_discrm * 1/(2 * nrow(counts_tidy))
+                          start_prob_discrm = start_prob_discrm * 1/(2 * sum(counts_tidy $n_discrm))
                         }
                       
                       }
@@ -257,21 +249,16 @@ naiveBayes <- setRefClass("naiveBayes",
                       }
                     },
                     
-                    # score you test set so to get the understanding how well you model
-                    # works.
-                    # look at f1 score or precision and recall
-                    # visualize them 
-                    # try how well your model generalizes to real world data! 
+
                     score = function(X_test, y_test)
                     {
-                      X_vectorized <- data_frame("tweets" = X_test)
-                      X_vectorized <- X_vectorized %>% rowwise()  %>% mutate(y_hat = predict(tweets))
-                      results <- X_vectorized 
+                      results <- data_frame("tweets" = X_test)
+                      results <- results %>% rowwise() %>% mutate(y_hat = predict(tweets))
+                      results <- results 
                       results$y <- y_test
                       
                       results <- results  %>% mutate(successful = if_else(y_hat == y, 1, 0))
                       
-                      print(results)
                       return (sum(results$successful)/nrow(results))
                     }
 ))
@@ -284,8 +271,8 @@ model$fit(tidy_text)
 counts_tidy <- model$counts_tidy
 ```
 ```{r}
-X_test <- train[1:300,4]
-y_test <- train[1:300,3]
+X_test <- train[1:200,4]
+y_test <- train[1:200,3]
 model$score(X_test, y_test)
 ```
 

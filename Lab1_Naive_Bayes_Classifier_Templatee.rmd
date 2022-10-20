@@ -231,7 +231,7 @@ naiveBayes <- setRefClass("naiveBayes",
                         if (word %in% counts_tidy$splitted){
                           start_prob_discrm = start_prob_discrm * counts_tidy[which(counts_tidy$splitted == word), 5]
                         }else{
-                          start_prob_discrm = start_prob_discrm * 1/(2 * sum(counts_tidy $n_discrm))
+                          start_prob_discrm = start_prob_discrm * 1/(2 * nrow(counts_tidy))
                         }
                       
                       }
